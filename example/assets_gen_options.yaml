@@ -1,0 +1,7 @@
+output: assets.g.dart
+class_name: Assets
+include_package: true
+include_path: true
+ignore_resolution: true
+exclude:
+  - assets/exclude/*

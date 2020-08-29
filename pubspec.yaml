@@ -1,0 +1,15 @@
+name: assets_gen
+description: >
+  The `assets_gen` package provides builders to generate a .dart file that contains all assets' path according to `pubspec.yaml`.
+version: 0.1.0
+publish_to: https://pub.dev
+homepage: https://github.com/chenenyu/assets_gen
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  yaml: '>=2.2.0 <3.0.0'
+  build: '>=1.0.0 <2.0.0'
+  path: '>=1.6.0 <2.0.0'
+  glob: '>=1.2.0 <2.0.0'
