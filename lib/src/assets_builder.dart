@@ -6,10 +6,11 @@ import 'package:glob/glob.dart';
 import 'package:path/path.dart' as p;
 import 'package:yaml/yaml.dart';
 
-import 'const.dart';
 import 'options.dart';
 
 Builder assetsBuilder(BuilderOptions options) => AssetsBuilder();
+
+const String options_file = 'assets_gen_options.yaml';
 
 class AssetsBuilder implements Builder {
   AssetsBuilder();
@@ -30,15 +31,11 @@ class AssetsBuilder implements Builder {
     _prepare();
     AssetId id = buildStep.inputId; // package|lib/$lib$
 
-    AssetId assetsCache = AssetId(id.package, cache_file);
-    if (!(await buildStep.canRead(assetsCache))) {
-      log.severe(
-          'Can not read cache file \'$cache_file\' in package:${id.package}');
+    Iterable<String> assets = await _readPubspec(buildStep, id.package);
+    if (assets == null) {
       return;
     }
-    String content = await buildStep.readAsString(assetsCache);
-    List<String> lines = content.trim().split('\n');
-    Iterable<String> paths = await _findAssets(buildStep, lines);
+    Iterable<String> paths = await _findAssets(buildStep, assets);
 
     AssetId gen = AssetId(id.package, p.join('lib', genOptions.output));
     await buildStep.writeAsString(gen, _generate(id.package, paths));
@@ -61,10 +58,39 @@ class AssetsBuilder implements Builder {
       return;
     }
     if (yamlMap is! YamlMap) {
-      log.info('$options_file(${yamlMap.runtimeType}) is not map format.');
+      log.warning('$options_file(${yamlMap.runtimeType}) is not map format.');
       return;
     }
     genOptions.update(yamlMap.value);
+  }
+
+  Future<Iterable<String>> _readPubspec(
+      BuildStep buildStep, String package) async {
+    AssetId pubspec = AssetId(package, 'pubspec.yaml');
+    if ((await buildStep.canRead(pubspec)) != true) {
+      log.severe('Can not read ${pubspec.toString()}.');
+      return null;
+    }
+    String yaml = await buildStep.readAsString(pubspec);
+    YamlMap yamlMap = loadYaml(yaml);
+    if (!yamlMap.containsKey('flutter')) {
+      log.warning(
+          'Ignored: ${pubspec.toString()} does not contain \'flutter\' section.');
+      return null;
+    }
+    YamlMap flutter = yamlMap['flutter'];
+    if (!flutter.containsKey('assets')) {
+      log.warning(
+          'Ignored: ${pubspec.toString()} does not contain \'assets\' section.');
+      return null;
+    }
+    YamlList assets = flutter['assets'];
+    if (assets.isEmpty) {
+      log.warning(
+          'Ignored: ${pubspec.toString()} contains empty \'assets\' section.');
+      return null;
+    }
+    return List<String>.from(assets);
   }
 
   Future<Iterable<String>> _findAssets(
@@ -72,16 +98,29 @@ class AssetsBuilder implements Builder {
     Set<String> validAssets = assets.toSet();
     Set<String> paths = <String>{};
     for (String asset in validAssets) {
+      // log.fine(asset);
       if (asset.endsWith('/')) {
         // dir
-        Set<AssetId> assets = await buildStep
-            .findAssets(Glob('$asset*', recursive: false, caseSensitive: false))
-            .toSet();
-        assets.forEach((assetId) {
-          if (!genOptions.shouldExclude(assetId.path)) {
-            paths.add(assetId.path);
+        Glob glob = Glob('$asset*', recursive: false, caseSensitive: false);
+        Set<AssetId> assets = await buildStep.findAssets(glob).toSet();
+        if (assets.isNotEmpty) {
+          assets.forEach((assetId) {
+            if (!genOptions.shouldExclude(assetId.path)) {
+              paths.add(assetId.path);
+            }
+          });
+        } else {
+          Directory dir = Directory(asset);
+          if (dir.existsSync()) {
+            Iterable<FileSystemEntity> children =
+                dir.listSync().where((f) => f is File);
+            children.forEach((f) {
+              if (!genOptions.shouldExclude(f.path)) {
+                paths.add(f.path);
+              }
+            });
           }
-        });
+        }
       } else {
         // file
         if (!genOptions.shouldExclude(asset)) {
@@ -98,7 +137,8 @@ class AssetsBuilder implements Builder {
     content.writeln();
     content.writeln(
         '// **************************************************************************');
-    content.writeln('// Total assets: ${paths.length}');
+    content.writeln('// Total assets: ${paths.length}.');
+    content.writeln('// Powered by https://pub.dev/packages/assets_gen.');
     content.writeln(
         '// **************************************************************************');
 

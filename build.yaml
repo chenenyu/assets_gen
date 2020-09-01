@@ -6,39 +6,13 @@
 targets:
   $default:
     builders:
-      assets_gen|pubspec_builder:
-        enabled: true
-        generate_for:
-          - 'pubspec.yaml'
       assets_gen|assets_builder:
         enabled: true
-        generate_for:
-          #include:
-          #  - 'assets/**'
-          exclude:
-            - '.**'
-            - '*'
-            - 'lib/**'
-            - 'build/**'
-            - 'android/**'
-            - 'ios/**'
-            - 'web/**'
-            - 'macos/**'
-            - 'linux/**'
 
 builders:
-  pubspec_builder:
-    import: "package:assets_gen/assets_gen.dart"
-    builder_factories: ["pubspecBuilder"]
-    build_extensions: {"pubspec.yaml": ["assets_cache.txt"]}
-    build_to: cache
-    auto_apply: dependents
-    runs_before: ["assets_gen|assets_builder"]
-
   assets_builder:
     import: "package:assets_gen/assets_gen.dart"
     builder_factories: ["assetsBuilder"]
     build_extensions: {"$lib$": ["assets.g.dart"]}
     build_to: source
     auto_apply: dependents
-    required_inputs: ["assets_cache.txt"]

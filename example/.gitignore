@@ -19,4 +19,4 @@
 .pub/
 build/
 
-**/assets.g.dart
+#**/assets.g.dart

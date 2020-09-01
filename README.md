@@ -2,7 +2,7 @@
 
 ![[Pub Version](https://pub.dev/packages/assets_gen)](https://img.shields.io/pub/v/assets_gen)
 
-The `assets_gen` package provides builders to generate a .dart file that contains all assets' path according to `pubspec.yaml`.
+The `assets_gen` package provides a builder to generate a .dart file that contains all assets according to `pubspec.yaml`.
 
 ## Getting Started
 
@@ -11,7 +11,7 @@ The `assets_gen` package provides builders to generate a .dart file that contain
 ```yaml
 dev_dependencies:
   build_runner: ">=1.0.0 < 2.0.0"
-  assets_gen: ^0.1.1
+  assets_gen: ^0.1.2
 ```
 
 ### Usage
