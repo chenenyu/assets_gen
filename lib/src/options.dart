@@ -1,4 +1,5 @@
 import 'package:glob/glob.dart';
+import 'package:path/path.dart' as p;
 
 /// Parse options from 'assets_gen_options.yaml'
 class AssetsGenOptions {
@@ -58,10 +59,12 @@ class AssetsGenOptions {
 
   /// 是否排除该资源
   bool shouldExclude(String path) {
+    if (p.basename(path).startsWith('.')) { // ignore hidden file
+      return true;
+    }
     if (_ignoreResolution == true && _isResolution(path)) {
       return true;
     }
-
     if (_exclude == null || _exclude.isEmpty) {
       return false;
     }

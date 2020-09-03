@@ -11,7 +11,7 @@ The `assets_gen` package provides a builder to generate a .dart file that contai
 ```yaml
 dev_dependencies:
   build_runner: ">=1.0.0 < 2.0.0"
-  assets_gen: ^0.1.2
+  assets_gen: ">=0.1.0 <1.0.0"
 ```
 
 ### Usage

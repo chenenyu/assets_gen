@@ -1,3 +1,7 @@
+## [0.1.3] - 2020/09/03
+
+* Ignore hidden files, e.g. `.DS_Store`.
+  
 ## [0.1.2] - 2020/09/01
 
 * Support asset file beyond `assets/**` dir.  
