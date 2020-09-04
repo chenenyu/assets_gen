@@ -59,7 +59,8 @@ class AssetsGenOptions {
 
   /// 是否排除该资源
   bool shouldExclude(String path) {
-    if (p.basename(path).startsWith('.')) { // ignore hidden file
+    if (p.basename(path).startsWith('.')) {
+      // ignore hidden file
       return true;
     }
     if (_ignoreResolution == true && _isResolution(path)) {

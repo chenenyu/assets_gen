@@ -1,3 +1,7 @@
+## [0.1.4] - 2020/09/04
+
+* Add `pedantic`.
+
 ## [0.1.3] - 2020/09/03
 
 * Ignore hidden files, e.g. `.DS_Store`.

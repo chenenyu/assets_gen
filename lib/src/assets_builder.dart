@@ -113,7 +113,7 @@ class AssetsBuilder implements Builder {
           Directory dir = Directory(asset);
           if (dir.existsSync()) {
             Iterable<FileSystemEntity> children =
-                dir.listSync().where((f) => f is File);
+                dir.listSync().whereType<File>();
             children.forEach((f) {
               if (!genOptions.shouldExclude(f.path)) {
                 paths.add(f.path);
