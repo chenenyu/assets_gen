@@ -1,6 +1,6 @@
 # assets_gen
 
-![[Pub Version](https://pub.dev/packages/assets_gen)](https://img.shields.io/pub/v/assets_gen)
+[![Pub Version](https://img.shields.io/pub/v/assets_gen)](https://pub.dev/packages/assets_gen)
 
 The `assets_gen` package provides a builder to generate a .dart file that contains all assets according to `pubspec.yaml`.
 
