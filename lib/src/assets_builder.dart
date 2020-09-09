@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:build/build.dart';
 import 'package:glob/glob.dart';
@@ -11,62 +12,82 @@ import 'options.dart';
 Builder assetsBuilder(BuilderOptions options) => AssetsBuilder();
 
 const String options_file = 'assets_gen_options.yaml';
+const String pubspec_file = 'pubspec.yaml';
 
 class AssetsBuilder implements Builder {
   AssetsBuilder();
 
-  AssetsGenOptions genOptions;
+  AssetsGenOptions _options;
 
   @override
   Map<String, List<String>> get buildExtensions {
     _prepare();
     return {
-      r'$lib$': [genOptions.output]
+      r'$lib$': [_options.output]
     };
   }
 
   @override
   FutureOr<void> build(BuildStep buildStep) async {
-//    log.fine('AssetsBuilder#build');
+//    print('AssetsBuilder#build');
     _prepare();
     AssetId id = buildStep.inputId; // package|lib/$lib$
 
-    Iterable<String> assets = await _readPubspec(buildStep, id.package);
+    Iterable<String> assets =
+        await _readAssetsFromPubspec(buildStep, id.package);
     if (assets == null) {
-      return;
+      return null;
     }
     Iterable<String> paths = await _findAssets(buildStep, assets);
 
-    AssetId gen = AssetId(id.package, p.join('lib', genOptions.output));
+    AssetId gen = AssetId(id.package, p.join('lib', _options.output));
     await buildStep.writeAsString(gen, _generate(id.package, paths));
     return null;
   }
 
+  /// Update options
   _prepare() {
-    if (genOptions != null) {
+    if (_options != null) {
       return;
     }
-    genOptions = AssetsGenOptions();
+    _options = AssetsGenOptions();
+
+    // update from pubspec
+    File pubspecFile = File(pubspec_file);
+    if (!pubspecFile.existsSync()) {
+      return;
+    }
+    YamlMap pubspecYaml = loadYaml(pubspecFile.readAsStringSync());
+    if (pubspecYaml.containsKey('assets_gen')) {
+      final assets_gen = pubspecYaml['assets_gen'];
+      if (assets_gen is YamlMap) {
+        _options.update(assets_gen);
+      }
+    }
+
+    // update from options file
     File optionsFile = File(options_file);
     if (!optionsFile.existsSync()) {
       log.info('$options_file not exists.');
       return;
     }
-    final yamlMap = loadYaml(optionsFile.readAsStringSync());
-    if (yamlMap == null || yamlMap.isEmpty) {
-      log.info('$options_file is empty.');
+    final optionsYaml = loadYaml(optionsFile.readAsStringSync());
+    if (optionsYaml == null || optionsYaml.isEmpty) {
+      print('$options_file is empty.');
       return;
     }
-    if (yamlMap is! YamlMap) {
-      log.warning('$options_file(${yamlMap.runtimeType}) is not map format.');
+    if (optionsYaml is! YamlMap) {
+      log.warning(
+          '$options_file(${optionsYaml.runtimeType}) is not map format.');
       return;
     }
-    genOptions.update(yamlMap.value);
+    _options.update(optionsYaml.value);
   }
 
-  Future<Iterable<String>> _readPubspec(
+  /// Read assets from pubspec
+  Future<Iterable<String>> _readAssetsFromPubspec(
       BuildStep buildStep, String package) async {
-    AssetId pubspec = AssetId(package, 'pubspec.yaml');
+    AssetId pubspec = AssetId(package, pubspec_file);
     if ((await buildStep.canRead(pubspec)) != true) {
       log.severe('Can not read ${pubspec.toString()}.');
       return null;
@@ -74,13 +95,14 @@ class AssetsBuilder implements Builder {
     String yaml = await buildStep.readAsString(pubspec);
     YamlMap yamlMap = loadYaml(yaml);
     if (!yamlMap.containsKey('flutter')) {
-      log.warning(
+      log.severe(
           'Ignored: ${pubspec.toString()} does not contain \'flutter\' section.');
       return null;
     }
     YamlMap flutter = yamlMap['flutter'];
+
     if (!flutter.containsKey('assets')) {
-      log.warning(
+      log.severe(
           'Ignored: ${pubspec.toString()} does not contain \'assets\' section.');
       return null;
     }
@@ -105,7 +127,7 @@ class AssetsBuilder implements Builder {
         Set<AssetId> assets = await buildStep.findAssets(glob).toSet();
         if (assets.isNotEmpty) {
           assets.forEach((assetId) {
-            if (!genOptions.shouldExclude(assetId.path)) {
+            if (!_options.shouldExclude(assetId.path)) {
               paths.add(assetId.path);
             }
           });
@@ -115,7 +137,7 @@ class AssetsBuilder implements Builder {
             Iterable<FileSystemEntity> children =
                 dir.listSync().whereType<File>();
             children.forEach((f) {
-              if (!genOptions.shouldExclude(f.path)) {
+              if (!_options.shouldExclude(f.path)) {
                 paths.add(f.path);
               }
             });
@@ -123,7 +145,7 @@ class AssetsBuilder implements Builder {
         }
       } else {
         // file
-        if (!genOptions.shouldExclude(asset)) {
+        if (!_options.shouldExclude(asset)) {
           paths.add(asset);
         }
       }
@@ -138,21 +160,31 @@ class AssetsBuilder implements Builder {
     content.writeln(
         '// **************************************************************************');
     content.writeln('// Total assets: ${paths.length}.');
-    content.writeln('// Powered by https://pub.dev/packages/assets_gen.');
+    content.writeln('// Generated by https://pub.dev/packages/assets_gen.');
     content.writeln(
         '// **************************************************************************');
 
-    content.writeln('class ${genOptions.className} {');
+    content.writeln('class ${_options.className} {');
     content.writeln("  static const String package = '${package}';");
     for (String path in paths) {
       content.writeln();
-      String key = genOptions.includePath ? path : p.basename(path);
+
+      String key = path;
+      if (_options.omitPathLevels > 0) {
+        // 省略路径层级
+        List<String> pathSegments = p.split(p.dirname(path));
+        if (pathSegments.isNotEmpty) {
+          pathSegments = pathSegments
+              .sublist(min(_options.omitPathLevels, pathSegments.length));
+          key = p.join(p.joinAll(pathSegments), p.basename(path));
+        }
+      }
+      // 替换非法字符
       key = key.replaceAll('/', '_').replaceAll('-', '_').replaceAll('.', '_');
       // 如果key不是以字母或$开头，前面加一个$
       content.writeln(
           "  static const String ${key.startsWith(RegExp(r'[a-zA-Z$]')) ? '' : '\$'}$key = '${path}';");
-      if (genOptions.includePackage &&
-          !path.startsWith('packages/${package}')) {
+      if (_options.genPackagePath && !path.startsWith('packages/${package}')) {
         content.writeln(
             "  static const String ${package}\$$key = 'packages/${package}/${path}';");
       }

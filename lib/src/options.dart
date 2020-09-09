@@ -3,6 +3,8 @@ import 'package:path/path.dart' as p;
 
 /// Parse options from 'assets_gen_options.yaml'
 class AssetsGenOptions {
+  AssetsGenOptions();
+
   /// 生成的dart文件
   String _output = 'assets.g.dart';
 
@@ -11,29 +13,28 @@ class AssetsGenOptions {
 
   /// 是否额外生成带package的资源路径
   /// e.g. packages/${package}/path/to/img.png
-  bool _includePackage = true;
-
-  /// 生成的变量名是否包含路径
-  bool _includePath = true;
+  bool _genPackagePath = true;
 
   /// 是否忽略分辨率variant
   bool _ignoreResolution = true;
 
-  /// 忽略的文件/文件夹
-  /// 支持正则
-  List<String> _exclude;
+  /// asset key 省略路径层级
+  /// 0 表示不省略
+  int _omitPathLevels = 0;
 
-  AssetsGenOptions();
+  /// 忽略的文件/文件夹
+  /// 支持glob语法
+  List<String> _exclude;
 
   String get output => _output;
 
   String get className => _className;
 
-  bool get includePackage => _includePackage;
+  bool get genPackagePath => _genPackagePath;
 
-  bool get includePath => _includePath;
+  int get omitPathLevels => _omitPathLevels;
 
-  update(Map json) {
+  void update(Map json) {
     if (json['output'] is String) {
       _output = json['output'];
       if (!_output.endsWith('.dart')) {
@@ -43,14 +44,14 @@ class AssetsGenOptions {
     if (json['class_name'] is String) {
       _className = json['class_name'];
     }
-    if (json['include_package'] is bool) {
-      _includePackage = json['include_package'];
-    }
-    if (json['include_path'] is bool) {
-      _includePath = json['include_path'];
+    if (json['gen_package_path'] is bool) {
+      _genPackagePath = json['gen_package_path'];
     }
     if (json['ignore_resolution'] is bool) {
       _ignoreResolution = json['ignore_resolution'];
+    }
+    if (json['omit_path_levels'] is int) {
+      _omitPathLevels = json['omit_path_levels'];
     }
     if (json['exclude'] is List) {
       _exclude = (json['exclude'] as List).map((e) => e.toString()).toList();

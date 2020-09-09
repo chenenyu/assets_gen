@@ -1,3 +1,8 @@
+## [0.2.0] - 2020/09/09
+
+* Support options config in pubspec.yaml.
+* Support omits path levels to shorten asset key.
+
 ## [0.1.4] - 2020/09/04
 
 * Add `pedantic`.

@@ -29,3 +29,12 @@ flutter:
   #
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
+
+assets_gen:
+  output: assets.g.dart
+  class_name: Assets
+  gen_package_path: true
+  ignore_resolution: true
+  omit_path_levels: 0
+  exclude:
+    - assets/exclude/*
