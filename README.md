@@ -34,10 +34,10 @@ Here are two ways to custom the generated file:
 * Offer an `assets_gen_options.yaml` file
 
 * ```yaml
-  # Specify an asset_gen section in pubspec.yaml
+  # Specify an assets_gen section in pubspec.yaml
   flutter:
     assets:
-    	- path/to/asset
+      - path/to/asset
   assets_gen:
     - ...
   ```

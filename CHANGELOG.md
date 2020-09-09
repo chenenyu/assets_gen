@@ -1,4 +1,4 @@
-## [0.2.0+1] - 2020/09/09
+## [0.2.1] - 2020/09/09
 
 * Support options config in pubspec.yaml.
 * Support omits path levels to shorten asset key.
