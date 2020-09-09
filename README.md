@@ -38,8 +38,8 @@ Here are two ways to custom the generated file:
   flutter:
     assets:
     	- path/to/asset
-    assets_gen:
-    	- ...
+  assets_gen:
+    - ...
   ```
 
 
