@@ -46,7 +46,7 @@ class AssetsBuilder implements Builder {
   }
 
   /// Update options
-  _prepare() {
+  void _prepare() {
     if (_options != null) {
       return;
     }
@@ -68,12 +68,12 @@ class AssetsBuilder implements Builder {
     // update from options file
     File optionsFile = File(options_file);
     if (!optionsFile.existsSync()) {
-      log.info('$options_file not exists.');
+      log.fine('$options_file not exists.');
       return;
     }
     final optionsYaml = loadYaml(optionsFile.readAsStringSync());
     if (optionsYaml == null || optionsYaml.isEmpty) {
-      print('$options_file is empty.');
+      log.info('$options_file is empty.');
       return;
     }
     if (optionsYaml is! YamlMap) {
@@ -153,7 +153,7 @@ class AssetsBuilder implements Builder {
     return List<String>.from(paths)..sort();
   }
 
-  _generate(String package, Iterable<String> paths) {
+  String _generate(String package, Iterable<String> paths) {
     StringBuffer content = StringBuffer();
     content.writeln('// GENERATED CODE - DO NOT MODIFY BY HAND');
     content.writeln();
