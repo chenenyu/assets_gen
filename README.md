@@ -39,7 +39,7 @@ Here are two ways to custom the generated file:
     assets:
       - path/to/asset
   assets_gen:
-    - ...
+    ...
   ```
 
 
