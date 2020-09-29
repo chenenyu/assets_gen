@@ -16,7 +16,7 @@ The `assets_gen` package provides a builder to generate a .dart file that contai
 ```yaml
 dev_dependencies:
   build_runner: ">=1.0.0 < 2.0.0"
-  assets_gen: ">=0.2.0 <1.0.0"
+  assets_gen: any
 ```
 
 ### Usage
@@ -42,7 +42,6 @@ Here are two ways to custom the generated file:
     ...
   ```
 
-
 | option              | type         | default value   |                                                              |
 | ------------------- | ------------ | --------------- | ------------------------------------------------------------ |
 | `output`            | String       | `assets.g.dart` | Output position, always under `lib/`.                        |
@@ -51,4 +50,5 @@ Here are two ways to custom the generated file:
 | `ignore_resolution` | bool         | `true`          | Whether the builder should ignore resolution variant. e.g. `path/to/3.0x/foo.png` will be ignored. |
 | `omit_path_levels` | int | `0` | The path levels of generated key that the builder will omit. e.g. if levels is 2, the key of `path/to/foo.png` is `foo_png`. |
 | `exclude`           | List<String> | none            | Listed assets in exclude will be ignored in generated class. It supports [glob](https://github.com/dart-lang/glob) syntax. |
+| `plurals` | List<String> | none | Plurals support. e.g.  Specify a plural `- assets/vip/*.svg` will generate a function like `static String assets_vip_x_svg(Object p0) => 'assets/vip/${p0.toString()}.svg';`. |
 

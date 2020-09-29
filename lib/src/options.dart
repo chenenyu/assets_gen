@@ -1,38 +1,42 @@
 import 'package:glob/glob.dart';
 import 'package:path/path.dart' as p;
 
-/// Parse options from 'assets_gen_options.yaml'
+import 'asset.dart';
+
+/// Parse options from assets_gen options.
 class AssetsGenOptions {
   AssetsGenOptions();
 
-  /// 生成的dart文件
+  /// output file path
   String _output = 'assets.g.dart';
 
-  /// 生成的类名
+  String get output => _output;
+
+  /// class name
   String _className = 'Assets';
+
+  String get className => _className;
 
   /// 是否额外生成带package的资源路径
   /// e.g. packages/${package}/path/to/img.png
   bool _genPackagePath = true;
 
-  /// 是否忽略分辨率variant
-  bool _ignoreResolution = true;
+  bool get genPackagePath => _genPackagePath;
 
   /// asset key 省略路径层级
   /// 0 表示不省略
   int _omitPathLevels = 0;
 
+  int get omitPathLevels => _omitPathLevels;
+
+  /// 是否忽略分辨率variant
+  bool _ignoreResolution = true;
+
   /// 忽略的文件/文件夹
   /// 支持glob语法
   List<String> _exclude;
 
-  String get output => _output;
-
-  String get className => _className;
-
-  bool get genPackagePath => _genPackagePath;
-
-  int get omitPathLevels => _omitPathLevels;
+  List<String> _plurals;
 
   void update(Map json) {
     if (json['output'] is String) {
@@ -47,14 +51,17 @@ class AssetsGenOptions {
     if (json['gen_package_path'] is bool) {
       _genPackagePath = json['gen_package_path'];
     }
-    if (json['ignore_resolution'] is bool) {
-      _ignoreResolution = json['ignore_resolution'];
-    }
     if (json['omit_path_levels'] is int) {
       _omitPathLevels = json['omit_path_levels'];
     }
+    if (json['ignore_resolution'] is bool) {
+      _ignoreResolution = json['ignore_resolution'];
+    }
     if (json['exclude'] is List) {
       _exclude = (json['exclude'] as List).map((e) => e.toString()).toList();
+    }
+    if (json['plurals'] is List) {
+      _plurals = (json['plurals'] as List).map((e) => e.toString()).toList();
     }
   }
 
@@ -90,5 +97,18 @@ class AssetsGenOptions {
       return true;
     }
     return false;
+  }
+
+  /// 查找是否有对应的plural
+  void matchPlural(Asset asset) {
+    if (_plurals == null || _plurals.isEmpty) {
+      return;
+    }
+    for (String plural in _plurals) {
+      if (Glob(plural).matches(asset.path)) {
+        asset.plural = plural;
+        return;
+      }
+    }
   }
 }

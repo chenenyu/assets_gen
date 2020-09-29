@@ -17,12 +17,13 @@ flutter:
   # To add assets to your package, add an assets section, like this:
   assets:
     - assets/
-    - assets2/
     - assets/2x/
     - assets/3.0x/
-    - assets/1.txt
-    - assets/sub/
     - assets/exclude/
+    - assets/sub/
+    - assets/vip/
+    - assets/1.txt
+    - assets2/
   #
   # For details regarding assets in packages, see
   # https://flutter.dev/assets-and-images/#from-packages
@@ -38,3 +39,5 @@ assets_gen:
   omit_path_levels: 0
   exclude:
     - assets/exclude/*
+  plurals:
+    - assets/vip/*.svg

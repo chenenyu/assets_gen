@@ -1,3 +1,7 @@
+## [0.3.0] - 2020/09/29
+
+* Support plurals.
+
 ## [0.2.1] - 2020/09/09
 
 * Support options config in pubspec.yaml.
