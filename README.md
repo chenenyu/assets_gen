@@ -2,7 +2,7 @@
 
 [![Pub Version](https://img.shields.io/pub/v/assets_gen)](https://pub.dev/packages/assets_gen)
 
-The `assets_gen` package provides a builder to generate a .dart file that contains all assets according to `pubspec.yaml`.
+The `assets_gen` package helps you to generate a .dart file that contains all assets according to `pubspec.yaml`.
 
 | Way to reference asset path | Sample Code                                  |          |
 | ---------------------------- | -------------------------------------------- | -------- |
@@ -15,35 +15,35 @@ The `assets_gen` package provides a builder to generate a .dart file that contai
 
 ```yaml
 dev_dependencies:
-  build_runner: ">=1.0.0 < 2.0.0"
-  assets_gen: any
+  build_runner: ">=1.0.0 < 2.0.0" # Optional.
+  assets_gen: any # Replace 'any' with version number.
 ```
 
 ### Usage
 
-`flutter pub run build_runner build`: Run a single build and exit.
+|                                            | Use `build_runner`                   | Call directly (Recommend)          |
+| ------------------------------------------ | ------------------------------------ | ---------------------------------- |
+| Run a single build and exit.               | `flutter pub run build_runner build` | `flutter pub run assets_gen build` |
+| Continuously run builds as you edit files. | `flutter pub run build_runner watch` | `flutter pub run assets_gen watch` |
 
-`flutter pub run build_runner watch`: Continuously run builds as you edit files.
+Note: Call assets_gen script directly will take effect on the target package and it's dependencies.
 
-More info about [build_runner](https://pub.dev/packages/build_runner).
+More info about [pub-run](https://dart.dev/tools/pub/cmd/pub-run) and [build_runner](https://pub.dev/packages/build_runner).
 
 ### Options
 
-Here are two ways to custom the generated file:
-
-* Offer an `assets_gen_options.yaml` file
-
-* ```yaml
-  # Specify an assets_gen section in pubspec.yaml
-  flutter:
-    assets:
-      - path/to/asset
-  assets_gen:
-    ...
-  ```
+```yaml
+# Specify an assets_gen section in pubspec.yaml
+flutter:
+  assets:
+    - path/to/asset
+assets_gen:
+  ...
+```
 
 | option              | type         | default value   |                                                              |
 | ------------------- | ------------ | --------------- | ------------------------------------------------------------ |
+| `enable` | bool | `true` | Enable or not. |
 | `output`            | String       | `assets.g.dart` | Output position, always under `lib/`.                        |
 | `class_name`        | String       | `Assets`        | The generated class name.                                    |
 | `gen_package_path` | bool         | `true`         | Whether the builder should generate extra const variable with package info, e.g. `packages/${package}/path/to/foo.png` |

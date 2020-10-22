@@ -1,3 +1,7 @@
+## [1.0.0] - 2020/10/22
+
+* Add script to run directly.
+
 ## [0.3.0] - 2020/09/29
 
 * Support plurals.

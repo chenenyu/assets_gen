@@ -7,6 +7,10 @@ import 'asset.dart';
 class AssetsGenOptions {
   AssetsGenOptions();
 
+  bool _enable = true;
+
+  bool get enable => _enable;
+
   /// output file path
   String _output = 'assets.g.dart';
 
@@ -39,6 +43,9 @@ class AssetsGenOptions {
   List<String> _plurals;
 
   void update(Map json) {
+    if (json['enable'] is bool) {
+      _enable = json['enable'];
+    }
     if (json['output'] is String) {
       _output = json['output'];
       if (!_output.endsWith('.dart')) {
