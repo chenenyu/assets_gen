@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:assets_gen/src/log.dart';
 import 'package:build/build.dart' hide log;
 import 'package:path/path.dart' as p;
 
 import 'asset.dart';
+import 'log.dart';
 import 'pubspec.dart';
 
 void generate(PubSpec pubspec) {

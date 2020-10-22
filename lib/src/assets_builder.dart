@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:build/build.dart';
+import 'package:build/build.dart' hide log;
 
 import 'const.dart';
 import 'generator.dart';

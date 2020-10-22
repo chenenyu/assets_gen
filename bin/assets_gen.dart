@@ -10,7 +10,7 @@ void main(List<String> arguments) {
   final ArgParser parser = ArgParser();
   parser.addCommand('build');
   parser.addCommand('watch');
-  
+
   ArgResults results = parser.parse(arguments);
   if (results.command == null) return;
   if (results.command.name == 'build') {

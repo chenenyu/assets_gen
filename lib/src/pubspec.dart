@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:assets_gen/src/log.dart';
 import 'package:path/path.dart' as p;
 import 'package:yaml/yaml.dart';
 
 import 'const.dart';
+import 'log.dart';
 import 'options.dart';
 
 class PubSpec {
