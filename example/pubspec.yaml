@@ -1,7 +1,6 @@
 name: example
-description: A new Flutter package project.
+description: assets_gen examble project.
 version: 0.0.1
-homepage:
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -27,7 +26,7 @@ flutter:
     - assets2/
 
 assets_gen:
-  output: assets.g.dart
+  output: assets.dart
   class_name: Assets
   gen_package_path: true
   ignore_resolution: true

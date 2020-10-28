@@ -44,7 +44,7 @@ assets_gen:
 | option              | type         | default value   |                                                              |
 | ------------------- | ------------ | --------------- | ------------------------------------------------------------ |
 | `enable` | bool | `true` | Enable or not. |
-| `output`            | String       | `assets.g.dart` | Output position, always under `lib/`.                        |
+| `output`            | String       | `assets.dart` | Output position, always under `lib/`.                        |
 | `class_name`        | String       | `Assets`        | The generated class name.                                    |
 | `gen_package_path` | bool         | `true`         | Whether the builder should generate extra const variable with package info, e.g. `packages/${package}/path/to/foo.png` |
 | `ignore_resolution` | bool         | `true`          | Whether the builder should ignore resolution variant. e.g. `path/to/3.0x/foo.png` will be ignored. |

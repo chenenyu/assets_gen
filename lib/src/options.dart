@@ -12,7 +12,7 @@ class AssetsGenOptions {
   bool get enable => _enable;
 
   /// output file path
-  String _output = 'assets.g.dart';
+  String _output = 'assets.dart';
 
   String get output => _output;
 

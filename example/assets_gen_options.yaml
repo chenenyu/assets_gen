@@ -1,4 +1,4 @@
-output: assets.g.dart
+output: assets.dart
 class_name: Assets
 gen_package_path: true
 ignore_resolution: true

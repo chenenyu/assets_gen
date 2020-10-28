@@ -1,8 +1,21 @@
+import 'package:ansicolor/ansicolor.dart';
 import 'package:logging/logging.dart';
 
-Logger logger = Logger('assets_gen')
+final AnsiPen pen = AnsiPen();
+
+final Logger logger = Logger('assets_gen')
   ..onRecord.listen((record) {
-    record.message;
-    print(
-        '${record.time.toIso8601String()}[${record.level.name}]: ${record.message}');
+    String log = '[${record.level.name}] ${record.message}';
+    if (record.level >= Level.SEVERE) {
+      pen
+        ..reset()
+        ..xterm(001);
+      log = pen(log);
+    } else if (record.level >= Level.WARNING) {
+      pen
+        ..reset()
+        ..xterm(003);
+      log = pen(log);
+    }
+    print(log);
   });

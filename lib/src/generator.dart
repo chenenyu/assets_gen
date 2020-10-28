@@ -10,7 +10,7 @@ import 'pubspec.dart';
 
 void generate(PubSpec pubspec) {
   if (pubspec.options.enable != true || pubspec.flutterAssets == null) return;
-  logger.info('Generating ${pubspec.name}(${pubspec.path})');
+  logger.info('Generating package:${pubspec.name}');
   Iterable<Asset> assets = findAssets(pubspec);
   if (assets != null && assets.isNotEmpty) {
     String content = genContent(pubspec, assets);

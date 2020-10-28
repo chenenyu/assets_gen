@@ -1,6 +1,12 @@
+## [1.1.0] - 2020/10/28
+
+* Change default output file name to `assets.dart` to avoid conflicts with `json_serializable`.
+* Colorful terminal output.
+* Watch pubspec.yaml to reparse it and then generate new output.
+
 ## [1.0.0] - 2020/10/22
 
-* Add script to run directly.
+* Add script to run directly 🚀🚀🚀.
 
 ## [0.3.0] - 2020/09/29
 

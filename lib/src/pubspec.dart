@@ -8,6 +8,8 @@ import 'log.dart';
 import 'options.dart';
 
 class PubSpec {
+  bool isRoot = false;
+
   /// raw yaml content
   YamlMap yaml;
 
@@ -16,19 +18,27 @@ class PubSpec {
 
   /// package path
   String path = '';
+
+  /// flutter assets section
   List<String> flutterAssets;
+
+  /// gen options
   AssetsGenOptions options = AssetsGenOptions();
 
   /// only contains native direct dependencies
   List<PubSpec> pathDependencies = [];
 
-  /// pubspec file path
+  /// pubspec.yaml file path
   String get pubspecPath => p.join(path, pubspec_file);
 
-  PubSpec.parse(File f, {bool isRoot = false}) {
-    yaml = loadYaml(f.readAsStringSync());
-    name = yaml['name'];
+  PubSpec.parse(File f, {this.isRoot = false}) {
     path = p.normalize(f.parent.path);
+    update();
+  }
+
+  void update() {
+    yaml = loadYaml(File(pubspecPath).readAsStringSync());
+    name = yaml['name'];
     flutterAssets = _readAssets(yaml);
     _parseOptions();
     if (isRoot == true) {
