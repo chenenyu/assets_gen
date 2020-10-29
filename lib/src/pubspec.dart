@@ -51,13 +51,13 @@ class PubSpec {
     YamlMap flutter = yamlMap['flutter'];
     if (flutter == null) {
       logger.warning(
-          'Ignored: ${yamlMap['name']} does not contain \'flutter\' section.');
+          'Ignored: package:${yamlMap['name']} does not contain \'flutter\' section.');
       return null;
     }
     YamlList assets = flutter['assets'];
     if (assets == null) {
       logger.warning(
-          'Ignored: ${yamlMap['name']} does not contain \'assets\' section.');
+          'Ignored: package:${yamlMap['name']} does not contain \'assets\' section.');
       return null;
     }
     return List<String>.from(assets);
