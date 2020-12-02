@@ -13,6 +13,6 @@ builders:
   assets_builder:
     import: "package:assets_gen/assets_gen.dart"
     builder_factories: ["assetsBuilder"]
-    build_extensions: {"$lib$": ["assets.g.dart"]}
+    build_extensions: {"$lib$": ["assets.dart"]}
     build_to: source
     auto_apply: dependents

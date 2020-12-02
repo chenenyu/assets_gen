@@ -1,3 +1,7 @@
+## [1.1.1] - 2020/12/02
+
+* Constrain `ansicolor` to `^1.1.0`.
+
 ## [1.1.0] - 2020/10/28
 
 * Change default output file name to `assets.dart` to avoid conflicts with `json_serializable`.

@@ -15,18 +15,18 @@ The `assets_gen` package helps you to generate a .dart file that contains all as
 
 ```yaml
 dev_dependencies:
-  build_runner: ">=1.0.0 < 2.0.0" # Optional.
   assets_gen: any # Replace 'any' with version number.
+  build_runner: any # Optional.
 ```
 
 ### Usage
 
-|                                            | Use `build_runner`                   | Call directly (Recommend)          |
-| ------------------------------------------ | ------------------------------------ | ---------------------------------- |
-| Run a single build and exit.               | `flutter pub run build_runner build` | `flutter pub run assets_gen build` |
-| Continuously run builds as you edit files. | `flutter pub run build_runner watch` | `flutter pub run assets_gen watch` |
+|                                            | Call directly (Recommend)          | Use `build_runner`                   |
+| ------------------------------------------ | ---------------------------------- | ------------------------------------ |
+| Run a single build and exit.               | `flutter pub run assets_gen build` | `flutter pub run build_runner build` |
+| Continuously run builds as you edit files. | `flutter pub run assets_gen watch` | `flutter pub run build_runner watch` |
 
-Note: Call assets_gen script directly will take effect on the target package and it's dependencies.
+Note: Call `assets_gen` script directly will take effect on the target package and all it's dependencies.
 
 More info about [pub-run](https://dart.dev/tools/pub/cmd/pub-run) and [build_runner](https://pub.dev/packages/build_runner).
 
