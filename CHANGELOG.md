@@ -1,3 +1,7 @@
+## [1.1.2] - 2021/06/22
+
+* Support more glob syntax.
+
 ## [1.1.1] - 2020/12/02
 
 * Constrain `ansicolor` to `^1.1.0`.

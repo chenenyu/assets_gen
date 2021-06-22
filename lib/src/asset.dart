@@ -1,11 +1,9 @@
 /// Asset bean
 class Asset implements Comparable<Asset> {
-  final String path;
-  String plural;
+  String path;
+  bool isPlural = false;
 
   Asset(this.path);
-
-  bool get isPlural => plural != null;
 
   @override
   int compareTo(Asset other) {
@@ -17,13 +15,13 @@ class Asset implements Comparable<Asset> {
       identical(this, other) ||
       other is Asset &&
           runtimeType == other.runtimeType &&
-          (isPlural ? plural == other.plural : path == other.path);
+          (path == other.path);
 
   @override
-  int get hashCode => isPlural ? plural.hashCode : path.hashCode;
+  int get hashCode => path.hashCode;
 
   @override
   String toString() {
-    return 'Asset{path: $path, plural: $plural}';
+    return 'Asset{path: $path, isPlural: $isPlural}';
   }
 }

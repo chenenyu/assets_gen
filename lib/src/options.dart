@@ -107,13 +107,14 @@ class AssetsGenOptions {
   }
 
   /// 查找是否有对应的plural
-  void matchPlural(Asset asset) {
+  void handlePlural(Asset asset) {
     if (_plurals == null || _plurals.isEmpty) {
       return;
     }
     for (String plural in _plurals) {
       if (Glob(plural).matches(asset.path)) {
-        asset.plural = plural;
+        asset.path = plural;
+        asset.isPlural = true;
         return;
       }
     }

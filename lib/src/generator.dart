@@ -37,7 +37,7 @@ Iterable<Asset> findAssets(PubSpec pubspec) {
   void addAsset(String path) {
     if (!pubspec.options.shouldExclude(path)) {
       Asset asset = Asset(path);
-      pubspec.options.matchPlural(asset);
+      pubspec.options.handlePlural(asset);
       assets.add(asset);
     }
   }
@@ -79,7 +79,7 @@ String genContent(PubSpec pubspec, Iterable<Asset> assets) {
   for (Asset asset in assets) {
     content.writeln();
 
-    String key = asset.isPlural ? asset.plural : asset.path;
+    String key = asset.path;
     if (pubspec.options.omitPathLevels > 0) {
       // 省略路径层级
       List<String> pathSegments = p.split(p.dirname(key));
@@ -93,8 +93,21 @@ String genContent(PubSpec pubspec, Iterable<Asset> assets) {
     key = key.replaceAll('/', '_').replaceAll('-', '_').replaceAll('.', '_');
 
     if (asset.isPlural) {
-      key = key.replaceAll('*', 'x');
-      Iterable<Match> matches = '\*'.allMatches(asset.plural);
+      Iterable<Match> matches;
+      if (key.contains('**')) {
+        key = key.replaceAll('**', 'x');
+        matches = '\*\*'.allMatches(asset.path);
+      } else if (key.contains('*')) {
+        key = key.replaceAll('*', 'x');
+        matches = '\*'.allMatches(asset.path);
+      } else if (key.contains('?')) {
+        key = key.replaceAll('?', 'x');
+        matches = '\?'.allMatches(asset.path);
+      }
+      if (matches == null) {
+        logger.severe('Unsupported plural: $key');
+        break;
+      }
       // print('${asset.plural}中*的个数: ${matches.length}');
       String params = '(';
       String body = '';
@@ -106,11 +119,11 @@ String genContent(PubSpec pubspec, Iterable<Asset> assets) {
       int index = 0;
       for (int i = 0, l = matches.length; i < l; i++) {
         Match match = list[i];
-        body += asset.plural.substring(index, match.start);
+        body += asset.path.substring(index, match.start);
         body += '\${p$i.toString()}';
         index = match.end;
       }
-      body += asset.plural.substring(index);
+      body += asset.path.substring(index);
 
       content.writeln(
           "  static String ${key.startsWith(RegExp(r'[a-zA-Z$]')) ? '' : '\$'}$key$params => '$body';");

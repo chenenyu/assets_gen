@@ -5,3 +5,5 @@ ignore_resolution: true
 omit_path_levels: 0
 exclude:
   - assets/exclude/*
+plurals:
+  - assets/vip/*.svg
