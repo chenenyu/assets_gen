@@ -8,19 +8,17 @@ import 'log.dart';
 import 'options.dart';
 
 class PubSpec {
-  bool isRoot = false;
-
   /// raw yaml content
-  YamlMap yaml;
+  late YamlMap yaml;
 
   /// package name
-  String name;
+  late String name;
 
   /// package path
   String path = '';
 
   /// flutter assets section
-  List<String> flutterAssets;
+  List<String>? flutterAssets;
 
   /// gen options
   AssetsGenOptions options = AssetsGenOptions();
@@ -31,7 +29,7 @@ class PubSpec {
   /// pubspec.yaml file path
   String get pubspecPath => p.join(path, pubspec_file);
 
-  PubSpec.parse(File f, {this.isRoot = false}) {
+  PubSpec.parse(File f) {
     path = p.normalize(f.parent.path);
     update();
   }
@@ -41,20 +39,17 @@ class PubSpec {
     name = yaml['name'];
     flutterAssets = _readAssets(yaml);
     _parseOptions();
-    if (isRoot == true) {
-      _parseDependencies();
-    }
   }
 
   /// Read assets from pubspec
-  List<String> _readAssets(YamlMap yamlMap) {
-    YamlMap flutter = yamlMap['flutter'];
+  List<String>? _readAssets(YamlMap yamlMap) {
+    YamlMap? flutter = yamlMap['flutter'];
     if (flutter == null) {
       logger.warning(
           'Ignored: package:${yamlMap['name']} does not contain \'flutter\' section.');
       return null;
     }
-    YamlList assets = flutter['assets'];
+    YamlList? assets = flutter['assets'];
     if (assets == null) {
       logger.warning(
           'Ignored: package:${yamlMap['name']} does not contain \'assets\' section.');
@@ -86,24 +81,6 @@ class PubSpec {
       return;
     }
     options.update(optionsYaml.value);
-  }
-
-  void _parseDependencies() {
-    YamlMap deps = yaml['dependencies'];
-    if (deps != null && deps.isNotEmpty) {
-      deps.forEach((k, v) {
-        if (k is String && v is YamlMap) {
-          String _path = v['path'];
-          if (_path != null) {
-            File pubspecFile = File(p.join(path, _path, pubspec_file));
-            if (pubspecFile.existsSync()) {
-              PubSpec pubspec = PubSpec.parse(pubspecFile);
-              pathDependencies.add(pubspec);
-            }
-          }
-        }
-      });
-    }
   }
 
   @override

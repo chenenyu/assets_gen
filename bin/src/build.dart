@@ -13,10 +13,7 @@ void runBuild() async {
   }
 
   logger.info('Building...');
-  PubSpec pubspec = PubSpec.parse(f, isRoot: true);
+  PubSpec pubspec = PubSpec.parse(f);
   generate(pubspec);
-  pubspec.pathDependencies?.forEach((element) {
-    generate(element);
-  });
   logger.info('Build finished.');
 }

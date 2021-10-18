@@ -11,7 +11,7 @@ import 'pubspec.dart';
 void generate(PubSpec pubspec) {
   if (pubspec.options.enable != true || pubspec.flutterAssets == null) return;
   logger.info('Generating package:${pubspec.name}');
-  Iterable<Asset> assets = findAssets(pubspec);
+  Iterable<Asset>? assets = findAssets(pubspec);
   if (assets != null && assets.isNotEmpty) {
     String content = genContent(pubspec, assets);
     File output = File(p.join(pubspec.path, 'lib', pubspec.options.output));
@@ -21,14 +21,16 @@ void generate(PubSpec pubspec) {
 
 void generateForBuilder(PubSpec pubspec, BuildStep buildStep) async {
   if (pubspec.options.enable != true || pubspec.flutterAssets == null) return;
-  Iterable<Asset> assets = findAssets(pubspec);
-  AssetId id = buildStep.inputId; // package|lib/$lib$
-  AssetId gen = AssetId(id.package, p.join('lib', pubspec.options.output));
-  await buildStep.writeAsString(gen, genContent(pubspec, assets));
+  Iterable<Asset>? assets = findAssets(pubspec);
+  if (assets != null && assets.isNotEmpty) {
+    AssetId id = buildStep.inputId; // package|lib/$lib$
+    AssetId gen = AssetId(id.package, p.join('lib', pubspec.options.output));
+    await buildStep.writeAsString(gen, genContent(pubspec, assets));
+  }
 }
 
-Iterable<Asset> findAssets(PubSpec pubspec) {
-  if (pubspec.flutterAssets == null || pubspec.flutterAssets.isEmpty) {
+Iterable<Asset>? findAssets(PubSpec pubspec) {
+  if (pubspec.flutterAssets == null || pubspec.flutterAssets!.isEmpty) {
     return null;
   }
 
@@ -42,7 +44,7 @@ Iterable<Asset> findAssets(PubSpec pubspec) {
     }
   }
 
-  for (String item in pubspec.flutterAssets) {
+  for (String item in pubspec.flutterAssets!) {
     if (item.endsWith('/')) {
       // dir
       Directory dir = Directory(p.join(pubspec.path, item));
@@ -93,7 +95,7 @@ String genContent(PubSpec pubspec, Iterable<Asset> assets) {
     key = key.replaceAll('/', '_').replaceAll('-', '_').replaceAll('.', '_');
 
     if (asset.isPlural) {
-      Iterable<Match> matches;
+      Iterable<Match>? matches;
       if (key.contains('**')) {
         key = key.replaceAll('**', 'x');
         matches = '\*\*'.allMatches(asset.path);

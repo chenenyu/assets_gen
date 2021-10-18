@@ -1,3 +1,8 @@
+## [1.2.0] - 2021/10/18
+
+* Null safety.
+* Disable auto generation for dependencies.
+
 ## [1.1.2] - 2021/06/22
 
 * Support more glob syntax.

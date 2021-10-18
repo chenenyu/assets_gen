@@ -13,20 +13,22 @@ Builder assetsBuilder(BuilderOptions options) => AssetsBuilder();
 class AssetsBuilder implements Builder {
   AssetsBuilder();
 
-  PubSpec _pubspec;
+  PubSpec? _pubspec;
 
   @override
   Map<String, List<String>> get buildExtensions {
     _prepare();
     return {
-      r'$lib$': [_pubspec.options.output]
+      r'$lib$': [_pubspec?.options.output ?? 'assets.dart']
     };
   }
 
   @override
   FutureOr<void> build(BuildStep buildStep) async {
     _prepare();
-    generateForBuilder(_pubspec, buildStep);
+    if (_pubspec != null) {
+      generateForBuilder(_pubspec!, buildStep);
+    }
     return null;
   }
 

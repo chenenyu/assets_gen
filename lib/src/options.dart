@@ -38,9 +38,9 @@ class AssetsGenOptions {
 
   /// 忽略的文件/文件夹
   /// 支持glob语法
-  List<String> _exclude;
+  List<String>? _exclude;
 
-  List<String> _plurals;
+  List<String>? _plurals;
 
   void update(Map json) {
     if (json['enable'] is bool) {
@@ -81,10 +81,10 @@ class AssetsGenOptions {
     if (_ignoreResolution == true && _isResolution(path)) {
       return true;
     }
-    if (_exclude == null || _exclude.isEmpty) {
+    if (_exclude == null || _exclude!.isEmpty) {
       return false;
     }
-    for (String glob in _exclude) {
+    for (String glob in _exclude!) {
       if (Glob(glob).matches(path)) {
         return true;
       }
@@ -108,10 +108,10 @@ class AssetsGenOptions {
 
   /// 查找是否有对应的plural
   void handlePlural(Asset asset) {
-    if (_plurals == null || _plurals.isEmpty) {
+    if (_plurals == null || _plurals!.isEmpty) {
       return;
     }
-    for (String plural in _plurals) {
+    for (String plural in _plurals!) {
       if (Glob(plural).matches(asset.path)) {
         asset.path = plural;
         asset.isPlural = true;

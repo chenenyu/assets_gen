@@ -12,10 +12,9 @@ void main(List<String> arguments) {
   parser.addCommand('watch');
 
   ArgResults results = parser.parse(arguments);
-  if (results.command == null) return;
-  if (results.command.name == 'build') {
+  if (results.command?.name == 'build') {
     runBuild();
-  } else if (results.command.name == 'watch') {
+  } else if (results.command?.name == 'watch') {
     runWatch();
   }
 }
