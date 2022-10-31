@@ -119,7 +119,8 @@ String genContent(PubSpec pubspec, Iterable<Asset> assets) {
       for (int i = 1; i < items.length; i++) {
         var item = items[i];
         item = item.substring(0, 1).toUpperCase() +
-            (item.length > 1 ? item.substring(1).toLowerCase() : '');
+            // (item.length > 1 ? item.substring(1).toLowerCase() : '');
+            (item.length > 1 ? item.substring(1) : '');//单词可能有些是大小，交给用户
         result += item;
       }
       key = result;
@@ -131,7 +132,8 @@ String genContent(PubSpec pubspec, Iterable<Asset> assets) {
       for (int i = 0; i < items.length; i++) {
         var item = items[i];
         item = item.substring(0, 1).toUpperCase() +
-            (item.length > 1 ? item.substring(1).toLowerCase() : '');
+            (item.length > 1 ? item.substring(1): '');
+            // (item.length > 1 ? item.substring(1).toLowerCase() : '');
         result += item;
       }
       key = result;
