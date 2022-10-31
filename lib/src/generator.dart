@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:build/build.dart' hide log;
+import 'package:dart_style/dart_style.dart';
 import 'package:path/path.dart' as p;
 
 import 'asset.dart';
@@ -15,7 +16,19 @@ void generate(PubSpec pubspec) {
   if (assets != null && assets.isNotEmpty) {
     String content = genContent(pubspec, assets);
     File output = File(p.join(pubspec.path, 'lib', pubspec.options.output));
+    content = formatDartContent(content);
     output.writeAsStringSync(content);
+  }
+}
+
+/// Formats Dart file content.
+/// 格式化生成的代码
+String formatDartContent(String content) {
+  try {
+    var formatter = DartFormatter();
+    return formatter.format(content);
+  } catch (e) {
+    return content;
   }
 }
 
@@ -91,9 +104,38 @@ String genContent(PubSpec pubspec, Iterable<Asset> assets) {
         key = p.join(p.joinAll(pathSegments), p.basename(key));
       }
     }
+    if(!pubspec.options.withFileExtensionName){
+      //不包括文件后缀名
+      key=key.substring(0,key.lastIndexOf('.'));
+    }
     // 替换非法字符
     key = key.replaceAll('/', '_').replaceAll('-', '_').replaceAll('.', '_');
 
+    if (pubspec.options.codeStyle == 'lowerCamelCase') {
+      //如果是小驼峰
+      var items = key.split('_');
+      items.forEach((element) {});
+      String result = items[0];
+      for (int i = 1; i < items.length; i++) {
+        var item = items[i];
+        item = item.substring(0, 1).toUpperCase() +
+            (item.length > 1 ? item.substring(1).toLowerCase() : '');
+        result += item;
+      }
+      key = result;
+    } else if (pubspec.options.codeStyle == 'UpperCamelCase') {
+      //如果是小驼峰
+      var items = key.split('_');
+      items.forEach((element) {});
+      String result = '';
+      for (int i = 0; i < items.length; i++) {
+        var item = items[i];
+        item = item.substring(0, 1).toUpperCase() +
+            (item.length > 1 ? item.substring(1).toLowerCase() : '');
+        result += item;
+      }
+      key = result;
+    }
     if (asset.isPlural) {
       Iterable<Match>? matches;
       if (key.contains('**')) {
