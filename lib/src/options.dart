@@ -42,6 +42,21 @@ class AssetsGenOptions {
 
   List<String>? _plurals;
 
+  /// https://dart.dev/guides/language/effective-dart/style
+  String _codeStyle = 'lowercase_with_underscores';
+
+  String get codeStyle => _codeStyle;
+
+  /// 是否需要包含文件扩展名
+  bool _withFileExtensionName = true;
+
+  bool get withFileExtensionName => _withFileExtensionName;
+
+  bool get formatDartCode => _formatDartCode;
+
+  ///是否格式化生成的dart代码
+  bool _formatDartCode = true;
+
   void update(Map json) {
     if (json['enable'] is bool) {
       _enable = json['enable'];
@@ -69,6 +84,15 @@ class AssetsGenOptions {
     }
     if (json['plurals'] is List) {
       _plurals = (json['plurals'] as List).map((e) => e.toString()).toList();
+    }
+    if (json['code_style'] is String) {
+      _codeStyle = json['code_style'];
+    }
+    if (json['with_file_extension_name'] is bool) {
+      _withFileExtensionName = json['with_file_extension_name'];
+    }
+    if (json['format_dart_code'] is bool) {
+      _formatDartCode = json['format_dart_code'];
     }
   }
 
