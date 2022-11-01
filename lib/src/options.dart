@@ -52,6 +52,11 @@ class AssetsGenOptions {
 
   bool get withFileExtensionName => _withFileExtensionName;
 
+  bool get formatDartCode => _formatDartCode;
+
+  ///是否格式化生成的dart代码
+  bool _formatDartCode = true;
+
   void update(Map json) {
     if (json['enable'] is bool) {
       _enable = json['enable'];
@@ -85,6 +90,9 @@ class AssetsGenOptions {
     }
     if (json['with_file_extension_name'] is bool) {
       _withFileExtensionName = json['with_file_extension_name'];
+    }
+    if (json['format_dart_code'] is bool) {
+      _formatDartCode = json['format_dart_code'];
     }
   }
 
