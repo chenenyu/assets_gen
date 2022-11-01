@@ -114,7 +114,6 @@ String genContent(PubSpec pubspec, Iterable<Asset> assets) {
     if (pubspec.options.codeStyle == 'lowerCamelCase') {
       //按照"_" 拆分成小驼峰命名格式
       var items = key.split('_');
-      items.forEach((element) {});
       String result = items[0];
       for (int i = 1; i < items.length; i++) {
         var item = items[i];
@@ -127,7 +126,6 @@ String genContent(PubSpec pubspec, Iterable<Asset> assets) {
     } else if (pubspec.options.codeStyle == 'UpperCamelCase') {
       //如果是小驼峰
       var items = key.split('_');
-      items.forEach((element) {});
       String result = '';
       for (int i = 0; i < items.length; i++) {
         var item = items[i];
