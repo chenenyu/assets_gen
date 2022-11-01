@@ -104,15 +104,15 @@ String genContent(PubSpec pubspec, Iterable<Asset> assets) {
         key = p.join(p.joinAll(pathSegments), p.basename(key));
       }
     }
-    if(!pubspec.options.withFileExtensionName){
+    if (!pubspec.options.withFileExtensionName) {
       //不包括文件后缀名
-      key=key.substring(0,key.lastIndexOf('.'));
+      key = key.substring(0, key.lastIndexOf('.'));
     }
     // 替换非法字符
     key = key.replaceAll('/', '_').replaceAll('-', '_').replaceAll('.', '_');
 
     if (pubspec.options.codeStyle == 'lowerCamelCase') {
-      //如果是小驼峰
+      //按照"_" 拆分成小驼峰命名格式
       var items = key.split('_');
       items.forEach((element) {});
       String result = items[0];
@@ -120,7 +120,7 @@ String genContent(PubSpec pubspec, Iterable<Asset> assets) {
         var item = items[i];
         item = item.substring(0, 1).toUpperCase() +
             // (item.length > 1 ? item.substring(1).toLowerCase() : '');
-            (item.length > 1 ? item.substring(1) : '');//单词可能有些是大小，交给用户
+            (item.length > 1 ? item.substring(1) : ''); //单词可能有些是大小，交给用户
         result += item;
       }
       key = result;
@@ -132,8 +132,8 @@ String genContent(PubSpec pubspec, Iterable<Asset> assets) {
       for (int i = 0; i < items.length; i++) {
         var item = items[i];
         item = item.substring(0, 1).toUpperCase() +
-            (item.length > 1 ? item.substring(1): '');
-            // (item.length > 1 ? item.substring(1).toLowerCase() : '');
+            (item.length > 1 ? item.substring(1) : '');
+        // (item.length > 1 ? item.substring(1).toLowerCase() : '');
         result += item;
       }
       key = result;
