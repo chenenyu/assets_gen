@@ -31,3 +31,4 @@ assets_gen:
     - assets/exclude/*
   plurals:
     - assets/vip/*.svg
+  format_dart_code: false

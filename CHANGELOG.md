@@ -1,3 +1,7 @@
+## [1.3.0] - 2022/11/14
+
+* Support new build options.
+
 ## [1.2.0] - 2021/10/18
 
 * Null safety.
