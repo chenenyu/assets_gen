@@ -36,7 +36,7 @@ class AssetsBuilder implements Builder {
     if (_pubspec != null) {
       return;
     }
-    File f = File(pubspec_file);
+    File f = File(pubspecFile);
     if (!f.existsSync()) {
       return;
     }

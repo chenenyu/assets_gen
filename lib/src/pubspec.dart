@@ -23,11 +23,8 @@ class PubSpec {
   /// gen options
   AssetsGenOptions options = AssetsGenOptions();
 
-  /// only contains native direct dependencies
-  List<PubSpec> pathDependencies = [];
-
   /// pubspec.yaml file path
-  String get pubspecPath => p.join(path, pubspec_file);
+  String get pubspecPath => p.join(path, pubspecFile);
 
   PubSpec.parse(File f) {
     path = p.normalize(f.parent.path);
@@ -60,27 +57,27 @@ class PubSpec {
 
   void _parseOptions() {
     // update from pubspec
-    final assets_gen = yaml['assets_gen'];
-    if (assets_gen is YamlMap) {
-      options.update(assets_gen);
+    final assetsGen = yaml['assets_gen'];
+    if (assetsGen is YamlMap) {
+      options.update(assetsGen);
     }
 
-    // update from options file
-    File optionsFile = File(p.join(path, options_file));
-    if (!optionsFile.existsSync()) {
-      return;
-    }
-    final optionsYaml = loadYaml(optionsFile.readAsStringSync());
-    if (optionsYaml == null || optionsYaml.isEmpty) {
-      logger.info('$options_file is empty.');
-      return;
-    }
-    if (optionsYaml is! YamlMap) {
-      logger.warning(
-          '$options_file(${optionsYaml.runtimeType}) is not map format.');
-      return;
-    }
-    options.update(optionsYaml.value);
+    // // update from options file
+    // File optionsFile = File(p.join(path, options_file));
+    // if (!optionsFile.existsSync()) {
+    //   return;
+    // }
+    // final optionsYaml = loadYaml(optionsFile.readAsStringSync());
+    // if (optionsYaml == null || optionsYaml.isEmpty) {
+    //   logger.info('$options_file is empty.');
+    //   return;
+    // }
+    // if (optionsYaml is! YamlMap) {
+    //   logger.warning(
+    //       '$options_file(${optionsYaml.runtimeType}) is not map format.');
+    //   return;
+    // }
+    // options.update(optionsYaml.value);
   }
 
   @override

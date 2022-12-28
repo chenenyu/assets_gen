@@ -6,7 +6,7 @@ import 'package:assets_gen/src/log.dart';
 import 'package:assets_gen/src/pubspec.dart';
 
 void runBuild() async {
-  File f = File(pubspec_file);
+  File f = File(pubspecFile);
   if (!f.existsSync()) {
     logger.severe('Can not find pubspec.yaml');
     return;

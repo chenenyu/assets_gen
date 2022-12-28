@@ -17,5 +17,5 @@ final Logger logger = Logger('assets_gen')
         ..xterm(003);
       log = pen(log);
     }
-    print(log);
+    print(log); // ignore: avoid_print
   });

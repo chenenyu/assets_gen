@@ -7,6 +7,7 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dev_dependencies:
+  flutter_lints: ^2.0.1
   build_runner: ">=2.0.0 <3.0.0"
   assets_gen:
     path: ../
@@ -32,3 +33,6 @@ assets_gen:
   plurals:
     - assets/vip/*.svg
   format_dart_code: false
+#  code_style: lowerCamelCase
+#  code_style: UpperCamelCase
+#  code_style: lowercase_with_underscores

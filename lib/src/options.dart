@@ -3,6 +3,14 @@ import 'package:path/path.dart' as p;
 
 import 'asset.dart';
 
+/// https://dart.dev/guides/language/effective-dart/style
+enum CodeStyle {
+  none,
+  lowercase_with_underscores, // ignore: constant_identifier_names
+  UpperCamelCase, // ignore: constant_identifier_names
+  lowerCamelCase,
+}
+
 /// Parse options from assets_gen options.
 class AssetsGenOptions {
   AssetsGenOptions();
@@ -42,10 +50,9 @@ class AssetsGenOptions {
 
   List<String>? _plurals;
 
-  /// https://dart.dev/guides/language/effective-dart/style
-  String _codeStyle = 'lowercase_with_underscores';
+  CodeStyle _codeStyle = CodeStyle.none;
 
-  String get codeStyle => _codeStyle;
+  CodeStyle get codeStyle => _codeStyle;
 
   /// 是否需要包含文件扩展名
   bool _withFileExtensionName = true;
@@ -54,8 +61,8 @@ class AssetsGenOptions {
 
   bool get formatDartCode => _formatDartCode;
 
-  ///是否格式化生成的dart代码
-  bool _formatDartCode = true;
+  /// 是否格式化生成的dart代码
+  bool _formatDartCode = false;
 
   void update(Map json) {
     if (json['enable'] is bool) {
@@ -64,7 +71,7 @@ class AssetsGenOptions {
     if (json['output'] is String) {
       _output = json['output'];
       if (!_output.endsWith('.dart')) {
-        throw ArgumentError("'output'(${_output}) must end with '.dart'.");
+        throw ArgumentError("'output'($_output) must end with '.dart'.");
       }
     }
     if (json['class_name'] is String) {
@@ -86,7 +93,20 @@ class AssetsGenOptions {
       _plurals = (json['plurals'] as List).map((e) => e.toString()).toList();
     }
     if (json['code_style'] is String) {
-      _codeStyle = json['code_style'];
+      switch (json['code_style']) {
+        case 'lowercase_with_underscores':
+          _codeStyle = CodeStyle.lowercase_with_underscores;
+          break;
+        case 'lowerCamelCase':
+          _codeStyle = CodeStyle.lowerCamelCase;
+          break;
+        case 'UpperCamelCase':
+          _codeStyle = CodeStyle.UpperCamelCase;
+          break;
+        default:
+          _codeStyle = CodeStyle.none;
+          break;
+      }
     }
     if (json['with_file_extension_name'] is bool) {
       _withFileExtensionName = json['with_file_extension_name'];

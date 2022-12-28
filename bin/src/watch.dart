@@ -7,8 +7,9 @@ import 'package:assets_gen/src/pubspec.dart';
 import 'package:path/path.dart' as p;
 import 'package:watcher/watcher.dart';
 
+// ignore_for_file: avoid_print
 void runWatch() {
-  File f = File(pubspec_file);
+  File f = File(pubspecFile);
   if (!f.existsSync()) {
     logger.severe('Can not find pubspec.yaml');
     return;
