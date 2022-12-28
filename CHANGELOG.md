@@ -1,3 +1,7 @@
+## [1.4.0] - 2022/12/28
+
+* Fix issue #3 and #4.
+
 ## [1.3.0] - 2022/11/14
 
 * Support new build options.
