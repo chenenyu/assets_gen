@@ -32,7 +32,7 @@ More info about [pub-run](https://dart.dev/tools/pub/cmd/pub-run) and [build_run
 ### Options
 
 ```yaml
-# Specify an assets_gen section in pubspec.yaml
+# Specify an assets_gen section in pubspec.yaml or assets_gen.yaml
 flutter:
   assets:
     - path/to/asset
