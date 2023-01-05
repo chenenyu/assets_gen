@@ -1,3 +1,8 @@
+## [1.4.1] - 2023/01/05
+
+* Fix issue #6.
+* Re-support separated option file `assets_gen.yaml`.
+
 ## [1.4.0] - 2022/12/28
 
 * Fix issue #3 and #4.
