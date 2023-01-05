@@ -13,20 +13,32 @@ import 'pubspec.dart';
 void generate(PubSpec pubspec) {
   if (pubspec.options.enable != true || pubspec.flutterAssets == null) return;
   logger.info('Generating package:${pubspec.name}');
-  Iterable<Asset>? assets = findAssets(pubspec);
+  Iterable<Asset>? assets = _findAssets(pubspec);
   if (assets != null && assets.isNotEmpty) {
-    String content = genContent(pubspec, assets);
+    String content = _genContent(pubspec, assets);
     File output = File(p.join(pubspec.path, 'lib', pubspec.options.output));
     if (pubspec.options.formatDartCode) {
-      content = formatDartContent(content);
+      content = _dartFormat(content);
     }
     output.writeAsStringSync(content);
   }
 }
 
-/// Formats Dart file content.
-/// 格式化生成的代码
-String formatDartContent(String content) {
+void generateForBuilder(PubSpec pubspec, BuildStep buildStep) async {
+  if (pubspec.options.enable != true || pubspec.flutterAssets == null) return;
+  Iterable<Asset>? assets = _findAssets(pubspec);
+  if (assets != null && assets.isNotEmpty) {
+    AssetId id = buildStep.inputId; // package|lib/$lib$
+    AssetId gen = AssetId(id.package, p.join('lib', pubspec.options.output));
+    String content = _genContent(pubspec, assets);
+    if (pubspec.options.formatDartCode) {
+      content = _dartFormat(content);
+    }
+    await buildStep.writeAsString(gen, content);
+  }
+}
+
+String _dartFormat(String content) {
   try {
     var formatter = DartFormatter();
     return formatter.format(content);
@@ -35,21 +47,7 @@ String formatDartContent(String content) {
   }
 }
 
-void generateForBuilder(PubSpec pubspec, BuildStep buildStep) async {
-  if (pubspec.options.enable != true || pubspec.flutterAssets == null) return;
-  Iterable<Asset>? assets = findAssets(pubspec);
-  if (assets != null && assets.isNotEmpty) {
-    AssetId id = buildStep.inputId; // package|lib/$lib$
-    AssetId gen = AssetId(id.package, p.join('lib', pubspec.options.output));
-    String content = genContent(pubspec, assets);
-    if (pubspec.options.formatDartCode) {
-      content = formatDartContent(content);
-    }
-    await buildStep.writeAsString(gen, content);
-  }
-}
-
-Iterable<Asset>? findAssets(PubSpec pubspec) {
+Iterable<Asset>? _findAssets(PubSpec pubspec) {
   if (pubspec.flutterAssets == null || pubspec.flutterAssets!.isEmpty) {
     return null;
   }
@@ -85,7 +83,7 @@ Iterable<Asset>? findAssets(PubSpec pubspec) {
   return List<Asset>.from(assets)..sort();
 }
 
-String genContent(PubSpec pubspec, Iterable<Asset> assets) {
+String _genContent(PubSpec pubspec, Iterable<Asset> assets) {
   StringBuffer content = StringBuffer();
   content.writeln('// GENERATED CODE - DO NOT MODIFY BY HAND');
   content.writeln();
@@ -191,6 +189,7 @@ String genContent(PubSpec pubspec, Iterable<Asset> assets) {
           "  static String ${key.startsWith(RegExp(r'[a-zA-Z$]')) ? '' : '\$'}$key$params => '$body';");
       if (pubspec.options.genPackagePath &&
           !asset.path.startsWith('packages/${pubspec.name}')) {
+        content.writeln(); // for dart format
         content.writeln(
             "  static String ${pubspec.name}\$$key$params => 'packages/${pubspec.name}/$body';");
       }

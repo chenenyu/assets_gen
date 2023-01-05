@@ -22,6 +22,7 @@ class Assets {
   static const String example$assets_images_flutter_png = 'packages/example/assets/images/flutter.png';
 
   static String assets_vip_x_svg(Object p0) => 'assets/vip/${p0.toString()}.svg';
+
   static String example$assets_vip_x_svg(Object p0) => 'packages/example/assets/vip/${p0.toString()}.svg';
 
   static const String assets2_2_txt = 'assets2/2.txt';
