@@ -1,7 +1,7 @@
 name: assets_gen
 description: >
   The assets_gen package helps you to generate a .dart file that contains all assets according to `pubspec.yaml`.
-version: 1.4.1
+version: 1.5.0
 repository: https://github.com/chenenyu/assets_gen
 
 environment:
@@ -19,4 +19,4 @@ dependencies:
   yaml: ">=3.0.0 <4.0.0"
 
 dev_dependencies:
-  flutter_lints: ^2.0.1
+  lints: ^2.0.0

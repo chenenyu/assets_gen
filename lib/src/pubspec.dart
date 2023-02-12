@@ -15,7 +15,7 @@ class PubSpec {
   late String name;
 
   /// package path
-  String path = '';
+  String packagePath = '';
 
   /// flutter assets section
   List<String>? flutterAssets;
@@ -24,13 +24,13 @@ class PubSpec {
   AssetsGenOptions options = AssetsGenOptions();
 
   /// pubspec.yaml file path
-  String get pubspecPath => p.join(path, pubspecFile);
+  String get pubspecPath => p.join(packagePath, pubspecFile);
 
   /// assets_gen.yaml file path
-  String get optionsPath => p.join(path, optionsFile);
+  String get optionsPath => p.join(packagePath, optionsFile);
 
   PubSpec.parse(File f) {
-    path = p.normalize(f.parent.path);
+    packagePath = p.normalize(f.parent.path);
     update();
   }
 

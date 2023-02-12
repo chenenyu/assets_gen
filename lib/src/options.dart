@@ -118,7 +118,7 @@ class AssetsGenOptions {
 
   /// 是否排除该资源
   bool shouldExclude(String path) {
-    if (p.basename(path).startsWith('.')) {
+    if (p.posix.basename(path).startsWith('.')) {
       // ignore hidden file
       return true;
     }
@@ -129,7 +129,7 @@ class AssetsGenOptions {
       return false;
     }
     for (String glob in _exclude!) {
-      if (Glob(glob).matches(path)) {
+      if (Glob(glob, context: p.posix).matches(path)) {
         return true;
       }
     }
@@ -156,9 +156,8 @@ class AssetsGenOptions {
       return;
     }
     for (String plural in _plurals!) {
-      if (Glob(plural).matches(asset.path)) {
-        asset.path = plural;
-        asset.isPlural = true;
+      if (Glob(plural, context: p.posix).matches(asset.path)) {
+        asset.plural = plural;
         return;
       }
     }

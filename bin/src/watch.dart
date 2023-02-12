@@ -43,7 +43,7 @@ void runWatch() {
     });
 
     // watch assets
-    Directory assetsDir = Directory(p.join(pubspec.path, 'assets'));
+    Directory assetsDir = Directory(p.join(pubspec.packagePath, 'assets'));
     if (assetsDir.existsSync()) {
       DirectoryWatcher dirWatcher = DirectoryWatcher(assetsDir.path);
       dirWatcher.events.listen((event) {

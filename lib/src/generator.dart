@@ -16,7 +16,8 @@ void generate(PubSpec pubspec) {
   Iterable<Asset>? assets = _findAssets(pubspec);
   if (assets != null && assets.isNotEmpty) {
     String content = _genContent(pubspec, assets);
-    File output = File(p.join(pubspec.path, 'lib', pubspec.options.output));
+    File output =
+        File(p.join(pubspec.packagePath, 'lib', pubspec.options.output));
     if (pubspec.options.formatDartCode) {
       content = _dartFormat(content);
     }
@@ -55,6 +56,9 @@ Iterable<Asset>? _findAssets(PubSpec pubspec) {
   Set<Asset> assets = <Asset>{};
 
   void addAsset(String path) {
+    if (Platform.isWindows) {
+      path = path.replaceAll(p.windows.separator, p.posix.separator);
+    }
     if (!pubspec.options.shouldExclude(path)) {
       Asset asset = Asset(path);
       pubspec.options.handlePlural(asset);
@@ -65,21 +69,32 @@ Iterable<Asset>? _findAssets(PubSpec pubspec) {
   for (String item in pubspec.flutterAssets!) {
     if (item.endsWith('/')) {
       // dir
-      Directory dir = Directory(p.join(pubspec.path, item));
+      String fixedItem = item;
+      if (Platform.isWindows) {
+        // 这里转换为windows下的路径，避免下面的文件查找操作异常
+        fixedItem =
+            fixedItem.replaceAll(p.posix.separator, p.windows.separator);
+      }
+      Directory dir = Directory(p.join(pubspec.packagePath, fixedItem));
       if (dir.existsSync()) {
         Iterable<File> files = dir.listSync().whereType<File>();
         if (files.isNotEmpty) {
           for (var f in files) {
             // 工作路径转换为当前package的相对路径
-            addAsset(p.relative(p.normalize(f.path), from: pubspec.path));
+            String path =
+                p.relative(p.normalize(f.path), from: pubspec.packagePath);
+            addAsset(path);
           }
         }
+      } else {
+        logger.warning('Can\'t find directory($fixedItem) in asset: $item');
       }
     } else {
       // file
       addAsset(item);
     }
   }
+
   return List<Asset>.from(assets)..sort();
 }
 
@@ -102,7 +117,7 @@ String _genContent(PubSpec pubspec, Iterable<Asset> assets) {
   for (Asset asset in assets) {
     content.writeln();
 
-    String key = asset.path;
+    String key = asset.key;
     if (pubspec.options.omitPathLevels > 0) {
       // 省略路径层级
       List<String> pathSegments = p.split(p.dirname(key));
@@ -117,11 +132,7 @@ String _genContent(PubSpec pubspec, Iterable<Asset> assets) {
       key = p.withoutExtension(key);
     }
     // 替换非法字符
-    key = key
-        .replaceAll('/', '_')
-        .replaceAll('-', '_')
-        .replaceAll('.', '_')
-        .replaceAll(' ', '_');
+    key = _convert2ValidKey(key, plural: asset.isPlural);
 
     if (pubspec.options.codeStyle == CodeStyle.lowerCamelCase) {
       // 按照"_" 拆分成小驼峰命名格式
@@ -156,13 +167,13 @@ String _genContent(PubSpec pubspec, Iterable<Asset> assets) {
       Iterable<Match>? matches;
       if (key.contains('**')) {
         key = key.replaceAll('**', 'x');
-        matches = '**'.allMatches(asset.path);
+        matches = '**'.allMatches(asset.key);
       } else if (key.contains('*')) {
         key = key.replaceAll('*', 'x');
-        matches = '*'.allMatches(asset.path);
+        matches = '*'.allMatches(asset.key);
       } else if (key.contains('?')) {
         key = key.replaceAll('?', 'x');
-        matches = '?'.allMatches(asset.path);
+        matches = '?'.allMatches(asset.key);
       }
       if (matches == null) {
         logger.severe('Unsupported plural: $key');
@@ -179,16 +190,16 @@ String _genContent(PubSpec pubspec, Iterable<Asset> assets) {
       int index = 0;
       for (int i = 0, l = matches.length; i < l; i++) {
         Match match = list[i];
-        body += asset.path.substring(index, match.start);
+        body += asset.key.substring(index, match.start);
         body += '\${p$i.toString()}';
         index = match.end;
       }
-      body += asset.path.substring(index);
+      body += asset.key.substring(index);
 
       content.writeln(
           "  static String ${key.startsWith(RegExp(r'[a-zA-Z$]')) ? '' : '\$'}$key$params => '$body';");
       if (pubspec.options.genPackagePath &&
-          !asset.path.startsWith('packages/${pubspec.name}')) {
+          !asset.key.startsWith('packages/${pubspec.name}')) {
         content.writeln(); // for dart format
         content.writeln(
             "  static String ${pubspec.name}\$$key$params => 'packages/${pubspec.name}/$body';");
@@ -207,4 +218,28 @@ String _genContent(PubSpec pubspec, Iterable<Asset> assets) {
   content.writeln('}');
 
   return content.toString();
+}
+
+// 合法的变量名包含：字母、数字、_、$
+final _validKeyReg = RegExp(r'[\w\d_$]');
+// 对于plural asset，合法的变量名包含：字母、数字、_、$、*、?
+final _validPluralKeyReg = RegExp(r'[\w\d_$*?]');
+
+/// Convert [key] to valid variable key
+String _convert2ValidKey(
+  String key, {
+  bool plural = false,
+  String replace = '_',
+}) {
+  final reg = plural ? _validPluralKeyReg : _validKeyReg;
+  StringBuffer buffer = StringBuffer();
+  for (int charCode in key.runes) {
+    String char = String.fromCharCode(charCode);
+    if (reg.hasMatch(char)) {
+      buffer.write(char);
+    } else {
+      buffer.write(replace);
+    }
+  }
+  return buffer.toString();
 }
